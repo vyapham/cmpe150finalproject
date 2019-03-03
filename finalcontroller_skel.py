@@ -20,6 +20,7 @@
 
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
+import pox.lib.packet as pkt
 
 log = core.getLogger()
 
@@ -43,6 +44,96 @@ class Final (object):
     #   - switch_id represents the id of the switch that received the packet
     #      (for example, s1 would have switch_id == 1, s2 would have switch_id == 2, etc...)
     print "Hello, World!"
+
+    msg = of.ofp_flow_mod()
+    msg.data = packet_in
+    
+    if packet.type != pkt.ethernet.IP_TYPE:
+      msg.match.dl_type = packet.type
+      msg.actions.append(of.ofp_action_output(port = of.OFPP_FLOOD))
+      self.connection.send(msg)
+    else:
+      ip_packet = packet.payload
+      srcip = ip_packet.srcip
+      dstip = ip_packet.dstip
+
+      ### s1
+      if switch_id == 1:
+        if dstip == '10.0.1.10':
+          msg.actions.append(of.ofp_action_output(port = 8))
+          self.connection.send(msg)
+        else:
+          msg.actions.append(of.ofp_action_output(port = 9))
+          self.connection.send(msg)
+    
+          ### s2
+      elif switch_id == 2:
+        if dstip == '10.0.2.20':
+          msg.actions.append(of.ofp_action_output(port = 8))
+          self.connection.send(msg)
+        else:
+          msg.actions.append(of.ofp_action_output(port = 9))
+          self.connection.send(msg)
+            
+        ### s3
+      elif switch_id == 3:
+        if dstip == '10.0.3.30':
+          msg.actions.append(of.ofp_action_output(port = 8))
+          self.connection.send(msg)
+        else:
+          msg.actions.append(of.ofp_action_output(port = 9))
+          self.connection.send(msg)
+
+        ### Data Center Switch
+      elif switch_id == 5:
+        if dstip == '10.0.4.10':
+          msg.actions.append(of.ofp_action_output(port = 8))
+          self.connection.send(msg)
+        else:
+          msg.actions.append(of.ofp_action_output(port = 9))
+          self.connection.send(msg)
+
+          ### Core Switch
+      else: # switch_id = 4
+        # traffic to trusted host
+        if dstip == '104.82.214.112':
+          msg.actions.append(of.ofp_action_out(port = 4))
+          self.connection.send(msg)
+          # traffic to untrusted host
+        elif dstip == '156.134.2.12':
+          msg.actions.append(of.ofp_action_out(port = 5))
+          self.connection.send(msg)
+          # traffic to server
+        elif dstip == '10.0.4.10':
+          # untrusted host sending ip packet to server
+          if srcip == '156.134.2.12':
+            msg.actions.append(of.ofp_action_out(port = of.OFPP_NONE))
+            self.connection.send(msg)
+          else:
+            msg.actions.append(of.ofp_action_out(port = 6))
+            self.connection.send(msg)
+            # traffic to h10, h20, h30
+        else:
+          # untrusted host sending icmp packet to h10, h20, h30
+          if ip_packet.protocol == pkt.ipv4.ICMP_PROTOCOL and srcip == '156.134.2.12':
+            msg.actions.append(of.ofp_action_out(port = of.OFPP_NONE))
+            self.connection.send(msg)
+            # traffic to h10
+          elif dstip == '10.0.1.10':
+            msg.actions.append(of.ofp_action_out(port = 1))
+            self.connection.send(msg)
+            # traffic to h20
+          elif dstip == '10.0.2.20':
+            msg.actions.append(of.ofp_action_out(port = 2))
+            self.connection.send(msg)
+          # traffic to h30
+          elif dstip == '10.0.3.30':
+            msg.actions.append(of.ofp_action_out(port = 3))
+            self.connection.send(msg)
+          else:
+            msg.actions.append(of.ofp_action_out(port = of.OFPP_NONE))
+            self.connection.send(msg)
+    
 
   def _handle_PacketIn (self, event):
     """
