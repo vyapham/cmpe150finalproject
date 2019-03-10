@@ -15,14 +15,14 @@ class final_topo(Topo):
     # default gateway like this for every host you make on this assignment to make sure all 
     # packets are sent out that port. Make sure to change the h# in the defaultRoute area
     # and the MAC address when you add more hosts!
-    h10 = self.addHost('h1', mac='00:00:00:00:00:01', ip='10.0.1.10/24', defaultRoute='h1-eth0')
-    h20 = self.addHost('h2', mac='00:00:00:00:00:02', ip='10.0.2.20/24', defaultRoute='h2-eth0')
-    h30 = self.addHost('h3', mac='00:00:00:00:00:03', ip='10.0.3.30/24', defaultRoute='h3-eth0')
+    h10 = self.addHost('h10', mac='00:00:00:00:00:01', ip='10.0.1.10/24', defaultRoute='h10-eth0')
+    h20 = self.addHost('h20', mac='00:00:00:00:00:02', ip='10.0.2.20/24', defaultRoute='h20-eth0')
+    h30 = self.addHost('h30', mac='00:00:00:00:00:03', ip='10.0.3.30/24', defaultRoute='h30-eth0')
     
-    server = self.addHost('h4', mac='00:00:00:00:00:04', ip='10.0.4.10/24', defaultRoute='h4-eth0')
+    server = self.addHost('server', mac='00:00:00:00:00:04', ip='10.0.4.10/24', defaultRoute='server-eth0')
 
-    trusted = self.addHost('h5', mac='00:00:00:00:00:05', ip='104.82.214.112/24', defaultRoute='h5-eth0')
-    untrusted = self.addHost('h6', mac='00:00:00:00:00:06', ip='156.134.2.12/24', defaultRoute='h6-eth0')
+    trusted = self.addHost('trusted', mac='00:00:00:00:00:05', ip='104.82.214.112/24', defaultRoute='trusted-eth0')
+    untrusted = self.addHost('untrusted', mac='00:00:00:00:00:06', ip='156.134.2.12/24', defaultRoute='untrusted-eth0')
 
     # Create a switch. No changes here from Lab 1.
     s1 = self.addSwitch('s1')
