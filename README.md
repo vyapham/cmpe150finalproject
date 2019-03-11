@@ -1,6 +1,7 @@
 CMPE 150 Final Project
 
 Hosts:
+	
 	Name: h10
 	MAC address: 00:00:00:00:00:00:01
 	IP Address: 10.0.1.10/24
@@ -26,6 +27,7 @@ Hosts:
 	IP Address: 156.134.2.12/24
 
 Switches:
+	
 	s1: Floor 1 Switch
 	s2: Floor 2 Switch
 	s3: Floor 3 Switch
@@ -33,6 +35,7 @@ Switches:
 	s5: Data Center Switch
 
 Logic:
+	
 	First, check if packet type is IP or not
 	If the packet type is not IP, just flood
 	
